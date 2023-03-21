@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 
-
 public class BlogSearchServiceTest {
     private BlogSearchService blogSearchService;
     private BlogSearchProvider blogSearchProvider;

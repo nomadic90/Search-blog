@@ -2,6 +2,7 @@ package com.hyuryu.searchblog.service;
 
 import com.hyuryu.searchblog.entity.SearchCount;
 import com.hyuryu.searchblog.repository.SearchCountRepository;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,10 +11,18 @@ import java.util.List;
 public class BlogSearchCountService {
     private SearchCountRepository searchCountRepository;
 
+    private static final long CACHE_EXPIRATION = 60 * 1000;
+
+    private List<SearchCount> keywords;
+    private long cacheExpireTime;
+
+    private final Object lock = new Object();
+
     public BlogSearchCountService(SearchCountRepository searchCountRepository) {
         this.searchCountRepository = searchCountRepository;
     }
 
+    @Async
     public void incrementSearchCount(String keyword) {
         SearchCount searchCount = searchCountRepository.findByKeyword(keyword);
         if (searchCount == null) {
@@ -26,6 +35,13 @@ public class BlogSearchCountService {
     }
 
     public List<SearchCount> getTop10Keywords() {
-        return searchCountRepository.findTop10ByOrderByCountDesc();
+        synchronized (lock) {
+            if (keywords == null || System.currentTimeMillis() > cacheExpireTime) {
+                keywords = searchCountRepository.findTop10ByOrderByCountDesc();
+                cacheExpireTime = System.currentTimeMillis() + CACHE_EXPIRATION;
+            }
+
+            return keywords;
+        }
     }
 }
