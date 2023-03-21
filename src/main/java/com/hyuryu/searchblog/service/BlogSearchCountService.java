@@ -24,19 +24,21 @@ public class BlogSearchCountService {
 
     @Async
     public void incrementSearchCount(String keyword) {
-        SearchCount searchCount = searchCountRepository.findByKeyword(keyword);
-        if (searchCount == null) {
-            searchCount = new SearchCount(keyword, 1);
-        } else {
-            searchCount.setCount(searchCount.getCount()+1);
-        }
+        synchronized (lock) {
+            SearchCount searchCount = searchCountRepository.findByKeyword(keyword);
+            if (searchCount == null) {
+                searchCount = new SearchCount(keyword, 1);
+            } else {
+                searchCount.setCount(searchCount.getCount()+1);
+            }
 
-        searchCountRepository.save(searchCount);
+            searchCountRepository.save(searchCount);
+        }
     }
 
     public List<SearchCount> getTop10Keywords() {
         synchronized (lock) {
-            if (keywords == null || System.currentTimeMillis() > cacheExpireTime) {
+            if (keywords == null || keywords.size() == 0 || System.currentTimeMillis() > cacheExpireTime) {
                 keywords = searchCountRepository.findTop10ByOrderByCountDesc();
                 cacheExpireTime = System.currentTimeMillis() + CACHE_EXPIRATION;
             }
