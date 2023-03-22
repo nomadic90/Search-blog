@@ -25,14 +25,12 @@ public class BlogSearchServiceTest {
 
     @Test
     public void searchTest() {
-        // Arrange
         List<BlogSearchResult> expectedResult = Arrays.asList(
                 new BlogSearchResult("Title 1", "URL 1", "t1", "d2"),
                 new BlogSearchResult("Title 2", "URL 2", "t1", "d2")
         );
         Mockito.when(blogSearchProvider.search(anyString(), anyString(), anyInt(), anyInt())).thenReturn(expectedResult);
 
-        // Act
         List<BlogSearchResult> actualResult = blogSearchService.search("query", "accuracy", 1, 10);
 
         // Assert

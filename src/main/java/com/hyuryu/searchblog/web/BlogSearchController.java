@@ -1,7 +1,6 @@
 package com.hyuryu.searchblog.web;
 
-import com.hyuryu.searchblog.entity.SearchCount;
-import com.hyuryu.searchblog.model.BlogSearchResult;
+import com.hyuryu.searchblog.base.model.CodeResponse;
 import com.hyuryu.searchblog.provider.KakaoBlogSearchProvider;
 import com.hyuryu.searchblog.provider.NaverBlogSearchProvider;
 import com.hyuryu.searchblog.service.BlogSearchCountService;
@@ -25,16 +24,16 @@ public class BlogSearchController {
     }
 
     @GetMapping("/api/v1/search")
-    public List<BlogSearchResult> search(@RequestParam String query,
+    public CodeResponse search(@RequestParam String query,
                                          @RequestParam(required = false, defaultValue = "accuracy") String sort,
                                          @RequestParam(required = false, defaultValue = "1") int page,
                                          @RequestParam(required = false, defaultValue = "10") int size) {
         blogSearchCountService.incrementSearchCount(query);
-        return blogSearchService.search(query, sort, page, size);
+        return CodeResponse.successResult(blogSearchService.search(query, sort, page, size));
     }
 
     @GetMapping("/api/v1/top-keywords")
-    public List<SearchCount> getTopKeyowrds() {
-        return blogSearchCountService.getTop10Keywords();
+    public CodeResponse getTopKeyowrds() {
+        return CodeResponse.successResult(blogSearchCountService.getTop10Keywords());
     }
 }

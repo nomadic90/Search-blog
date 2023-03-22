@@ -25,7 +25,7 @@ dependencies {
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
+	testImplementation("org.assertj:assertj-core:3.21.0")
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.1")
 }
 

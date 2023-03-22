@@ -12,46 +12,43 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class BlogSearchCountServiceTest {
-//    private BlogSearchCountService blogSearchCountService;
-//    private SearchCountRepository searchCountRepository;
-//
-//    @BeforeEach
-//    public void setUp() {
-//        searchCountRepository = Mockito.mock(SearchCountRepository.class);
-//        blogSearchCountService = new BlogSearchCountService(searchCountRepository);
-//    }
-//
-//    @Test
-//    public void incrementSearchCountTest() {
-//        // Arrange
-//        SearchCount searchCount = new SearchCount("query", 1);
-//        Mockito.when(searchCountRepository.findByKeyword(anyString())).thenReturn(null);
-//        Mockito.when(searchCountRepository.save(any(SearchCount.class))).thenReturn(searchCount);
-//
-//        // Act
-//        blogSearchCountService.incrementSearchCount("query");
-//
-//        // Assert
-//        Mockito.verify(searchCountRepository).findByKeyword("query");
-//        Mockito.verify(searchCountRepository).save(searchCount);
-//    }
-//
-//    @Test
-//    public void getTop10KeywordsTest() {
-//        // Arrange
-//        List<SearchCount> expectedResult = Arrays.asList(
-//                new SearchCount("query1", 5),
-//                new SearchCount("query2", 3)
-//        );
-//        Mockito.when(searchCountRepository.findTop10ByOrderByCountDesc()).thenReturn(expectedResult);
-//
-//        // Act
-//        List<SearchCount> actualResult = blogSearchCountService.getTop10Keywords();
-//
-//        // Assert
-//        assertEquals(expectedResult, actualResult);
-//        Mockito.verify(searchCountRepository).findTop10ByOrderByCountDesc();
-//    }
+    private BlogSearchCountService blogSearchCountService;
+    private SearchCountRepository searchCountRepository;
+
+    @BeforeEach
+    public void setUp() {
+        searchCountRepository = mock(SearchCountRepository.class);
+        blogSearchCountService = new BlogSearchCountService(searchCountRepository);
+    }
+
+    @Test
+    public void incrementSearchCountTest() {
+        SearchCount searchCount = new SearchCount("query", 1);
+        Mockito.when(searchCountRepository.findByKeyword(anyString())).thenReturn(null);
+        Mockito.when(searchCountRepository.save(any(SearchCount.class))).thenReturn(searchCount);
+
+        blogSearchCountService.incrementSearchCount("query");
+
+        verify(searchCountRepository).findByKeyword("query");
+        verify(searchCountRepository).save(searchCount);
+    }
+
+    @Test
+    public void getTop10KeywordsTest() {
+        List<SearchCount> expectedResult = Arrays.asList(
+                new SearchCount("query1", 5),
+                new SearchCount("query2", 3)
+        );
+        Mockito.when(searchCountRepository.findTop10ByOrderByCountDesc()).thenReturn(expectedResult);
+
+        List<SearchCount> actualResult = blogSearchCountService.getTop10Keywords();
+
+        // Assert
+        assertEquals(expectedResult, actualResult);
+        verify(searchCountRepository).findTop10ByOrderByCountDesc();
+    }
 }
